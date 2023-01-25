@@ -30,9 +30,6 @@
  * @exports dev
  * @exports prod
  *
- * @todo ▶ <b>Весь проект</b> | Сделать документацию типа .md для github
- * @todo ▶ Выгрузить проект на github
- *
  * @todo ▶ Добавить bower вместо npm (@since 2.0.0)
  * @todo ▶ <b>{@link module:tasks/uploads}</b>Сделать функции для выгрузки файлов на другие типы удаленных файловых систем
  *
