@@ -1,15 +1,15 @@
 Documentation
 ===============
 
-See [jsdoc Documentation](https://github.com/Lordpluha/gulp-2022/docs/gulp-2022/1.0.0/index.html)
+See [jsdoc Documentation](https://github.com/Lordpluha/gulp-2022/blob/master/docs/gulp-2022/1.0.0/index.html)
 
 Security Policy
 ===============
-See [SECURITY](https://github.com/Lordpluha/gulp-2022/SECURITY.md)
+See [SECURITY](https://github.com/Lordpluha/gulp-2022/blob/master/SECURITY.md)
 
 Code of Conduct
 ===============
-See [CODE_OF_CONDUCT](https://github.com/Lordpluha/gulp-2022/CODE_OF_CONDUCT.md)
+See [CODE_OF_CONDUCT](https://github.com/Lordpluha/gulp-2022/blob/master/CODE_OF_CONDUCT.md)
 
 Install Guide
 ===============
