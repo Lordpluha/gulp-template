@@ -1,7 +1,7 @@
 Documentation
 ===============
 
-See [jsdoc Documentation](https://github.com/Lordpluha/gulp-2022/blob/master/docs/gulp-2022/1.0.0/index.html)
+See [jsdoc Documentation](https://lordpluha.github.io/gulp-2022/)
 
 Security Policy
 ===============
