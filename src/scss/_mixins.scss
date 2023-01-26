@@ -55,6 +55,8 @@
 					$format_full: 'embedded-opentype';
 				} @else if ( $format == 'ttf') {
 					$format_full: 'truetype';
+				} @else if ( $format == 'otf') {
+					$format_full: 'opentype';
 				}
 				@if ($format == list.nth($formats, -1)) {
 					$source: #{$source+url($file_dir+'/'+$font_name+'.'+$format) format("#{$format_full}")};
