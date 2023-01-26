@@ -6,12 +6,9 @@ const swiper = new Swiper();
 
 // Красивая загрузка елементов страницы
 document.addEventListener('DOMContentLoaded', function() {
-	window.addEventListener('scroll', animOnScroll());
-
-	webpfuncs.testWebP(function () {});
 	webpfuncs.ibg();
+	webpfuncs.testWebP(function () {});
 
 	setTimeout(animOnScroll, 300);
-
-	console.log('JS succesfully initializated!');
+	window.addEventListener('scroll', animOnScroll);
 });
