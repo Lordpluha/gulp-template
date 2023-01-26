@@ -1,5 +1,5 @@
 // Content upploading effect
-var AnimItems = document.getElementsByClassName('._anim-elem');
+var AnimItems = document.getElementsByClassName('_anim-elem');
 
 function offset(element) {
 	var rect = element.getBoundingClientRect(),
@@ -23,7 +23,7 @@ function animOnScroll () {
 		}
 		if ((window.pageYOffset > AnimItemOffset - animItemPoint) && window.pageYOffset < (AnimItemOffset + AnimItemHeight))
 		{
-			AnimItem.classList.add('_active__fx');
+			AnimItem.classList.add('_active-fx');
 		}
 	}
 }
