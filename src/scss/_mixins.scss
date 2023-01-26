@@ -1,26 +1,21 @@
 // Mixins
-@mixin adaptive-value ($property, $minSize, $maxSize, $type) {
+@mixin adaptive-value ($property, $minSize:0, $maxSize:0, $type:3) {
 	$addSize: $maxSize - $minSize;
-	// Меньше контейнера
+	// Только если меньше контейнера
 	@if $type == 1 {
-		// Присваивание свойству минимальной величины
 		#{$property}: $maxSize + px;
-
-		// Когда размер страницы меньше контентного блока (узкие Планшеты и телефоны)
 		@media (max-width: #{$ContentMaxWidth + px}) {
-
-			// Свойство = МинВелич + ДобавРазмер * Отступы_от_Content / Максимальное_изменение_Content
-			#{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - #{$SiteMinWidth+px}) / #{$ContentMaxWidth - $SiteMinWidth}));
+			#{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$ContentMaxWidth - 320px}));
 		}
-	// Если больше контейнера
+	// Только если больше контейнера
 	} @else if $type == 2 {
 		#{$property}: $maxSize + px;
 		@media (min-width: #{$ContentMaxWidth + px}) {
-			#{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - #{$SiteMinWidth}px) / #{$SiteMaxWidth - $SiteMinWidth}));
+			#{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$SiteMaxWidth - 320}));
 		}
 	// Всегда
-	} @else if $type == 3 {
-		#{$property}: calc(#{$SiteMaxWidth + px} + #{$addSize} * ((100vw - #{$SiteMinWidth}px) / #{$SiteMaxWidth - #{$SiteMinWidth}} ) );
+	} @else {
+		#{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$SiteMaxWidth - 320}));
 	}
 }
 
