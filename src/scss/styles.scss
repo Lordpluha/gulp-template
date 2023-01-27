@@ -36,9 +36,7 @@ body {}
 	max-width: $ContentMaxWidth+px;
 }
 
-header, nav, aside, article, section, footer {
-	font-family: 'Roboto-Medium';
-}
+header, nav, aside, article, section, footer {}
 
 // Красивая загрузка элементов (см. так же в app.js и _mixins.scss)
 $AnimTime: 1s;
