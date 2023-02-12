@@ -80,11 +80,11 @@ export const ttfToWoff2 = () => {
  *
  * @example const variable = getScssData()
  */
-    for (let i in files) {
-        files[i] != app.path.src.fontScss ? scssData += app.plugins.fs.readFileSync(app.path.src.scssDir+'/'+files[i], 'utf-8') : scssData = scssData
 const getScssData = () => {
     let files = app.plugins.fs.readdirSync(app.path.src.scssDir, () => {}),
         scssData = ''
+    for (let file of files) {
+        file != app.path.src.fontScss ? scssData += app.plugins.fs.readFileSync(app.path.src.scssDir+'/'+file, 'utf-8') : scssData = scssData
     }
     return scssData
 }
@@ -105,8 +105,8 @@ const DirWalk = (dir, data, func) => {
     data.files_ = data.files_ || []
     let files = app.plugins.fs.readdirSync(dir, () => {})
 
-    for (let i in files) {
-        let name = `${dir}/${files[i]}`
+    for (let file of files) {
+        let name = `${dir}/${file}`
         if (app.plugins.fs.statSync(name).isDirectory()){
             DirWalk(name, data, func)
         } else {
