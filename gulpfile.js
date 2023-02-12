@@ -37,9 +37,9 @@
  * @license GNU
  */
 
-import gulp from 'gulp';
-import { path } from "./gulp/configs/path.js";
-import { plugins } from "./gulp/configs/plugins.js";
+import gulp from 'gulp'
+import { path } from "./gulp/configs/path.js"
+import { plugins } from "./gulp/configs/plugins.js"
 
 /**
  * @global
@@ -64,15 +64,15 @@ global.app = {
     MainFileType: 'html'
 }
 
-import { cleanBuild } from "./gulp/tasks/clean.js";
-import { scss } from "./gulp/tasks/scss.js";
-import { html } from "./gulp/tasks/html.js";
-import { images, svgSprites } from "./gulp/tasks/images.js";
-import { js } from "./gulp/tasks/js.js";
-import { CpCerts, server } from "./gulp/tasks/server.js";
-import { otfToTtf, ttfToWoff, ttfToWoff2, fontsStyle, fontsCp } from "./gulp/tasks/fonts.js";
-import { ZipBuild } from "./gulp/tasks/zip.js";
-import { FtpUpload } from "./gulp/tasks/deploy.js";
+import { cleanBuild } from "./gulp/tasks/clean.js"
+import { scss } from "./gulp/tasks/scss.js"
+import { html } from "./gulp/tasks/html.js"
+import { images, svgSprites } from "./gulp/tasks/images.js"
+import { js } from "./gulp/tasks/js.js"
+import { CpCerts, server } from "./gulp/tasks/server.js"
+import { otfToTtf, ttfToWoff, ttfToWoff2, fontsStyle, fontsCp } from "./gulp/tasks/fonts.js"
+import { ZipBuild } from "./gulp/tasks/zip.js"
+import { FtpUpload } from "./gulp/tasks/deploy.js"
 
 /**
  * @function watcher
@@ -87,10 +87,10 @@ function watcher() {
      * @event watchFiles
      * @desc Событие наблюдения за файлами .scss, .html, картинками и .js
      */
-    gulp.watch(path.watch.scss, scss);
-    gulp.watch(path.watch.html, html);
-    gulp.watch(path.watch.images, images);
-    gulp.watch(path.watch.js, js);
+    gulp.watch(path.watch.scss, scss)
+    gulp.watch(path.watch.html, html)
+    gulp.watch(path.watch.images, images)
+    gulp.watch(path.watch.js, js)
 }
 
 /**
@@ -107,7 +107,7 @@ function watcher() {
  * @fires fontsStyle
  * @fires fontsCp
  */
-const fonts = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2), fontsStyle, fontsCp);
+const fonts = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2), fontsStyle, fontsCp)
 
 /**
  * @function FilesProcess
@@ -123,7 +123,7 @@ const fonts = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2), fontsS
  * @fires processImages
  * @fires processJS
  */
-const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js);
+const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js)
 
 /**
  * @function dev
@@ -139,7 +139,7 @@ const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js);
  * @fires server
  * @fires FilesProcess
  */
-const dev = gulp.series(cleanBuild, FilesProcess, gulp.parallel(watcher, gulp.series(CpCerts, server)));
+export const dev = gulp.series(cleanBuild, FilesProcess, gulp.parallel(watcher, gulp.series(CpCerts, server)))
 
 /**
  * @function prod
@@ -149,19 +149,19 @@ const dev = gulp.series(cleanBuild, FilesProcess, gulp.parallel(watcher, gulp.se
  * @fires cleanBuild
  * @fires FilesProcess
  */
-const prod = gulp.series(cleanBuild, FilesProcess);
+export const prod = gulp.series(cleanBuild, FilesProcess)
 
 /**
  * @desc Production mode UI
  * @fires StartProduction
  */
-gulp.task('prod', prod);
+gulp.task('prod', prod)
 
 /**
  * @desc Developement mode UI
  * @fires StartDev
  */
-gulp.task('default', dev);
+gulp.task('default', dev)
 
 /**
  * @desc Archivate UI
@@ -169,7 +169,7 @@ gulp.task('default', dev);
  * @fires FilesProcess
  * @fires ZipBuild
  */
-gulp.task('zip', gulp.series(cleanBuild, FilesProcess, ZipBuild));
+gulp.task('zip', gulp.series(cleanBuild, FilesProcess, ZipBuild))
 
 /**
  * @desc Project deploy UI
@@ -178,10 +178,7 @@ gulp.task('zip', gulp.series(cleanBuild, FilesProcess, ZipBuild));
  * @fires ZipBuild
  * @fires FtpUpload
  */
-gulp.task('deploy', gulp.series(cleanBuild, FilesProcess, ZipBuild, FtpUpload));
-
-export { dev };
-export { prod };
+gulp.task('deploy', gulp.series(cleanBuild, FilesProcess, ZipBuild, FtpUpload))
 
 /**
  * @typedef plugin
