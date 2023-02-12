@@ -80,11 +80,11 @@ export const ttfToWoff2 = () => {
  *
  * @example const variable = getScssData()
  */
-function getScssData () {
-    let files = app.plugins.fs.readdirSync(app.path.src.scssDir, () => {})
-    let scssData = ''
     for (let i in files) {
         files[i] != app.path.src.fontScss ? scssData += app.plugins.fs.readFileSync(app.path.src.scssDir+'/'+files[i], 'utf-8') : scssData = scssData
+const getScssData = () => {
+    let files = app.plugins.fs.readdirSync(app.path.src.scssDir, () => {}),
+        scssData = ''
     }
     return scssData
 }
@@ -111,13 +111,10 @@ const DirWalk = (dir, data, func) => {
             DirWalk(name, data, func)
         } else {
             data.files_.push(name)
-            let file_name, file_ext = files[i].split('.')
+            let file_name, file_ext = file.split('.')
 
             // Sending arg by using object Data
-            data.file_ext = file_ext
-            data.file_name = file_name
-            data.dir = dir
-            data.name = name
+            data.file_ext, data.file_name, data.dir, data.name = file_ext, file_name, dir, name
 
             // Cheking file extension
             if (["ttf","woff","woff2","otf","eot","eot?#iefix"].includes(file_ext)) {
@@ -144,8 +141,8 @@ const DirWalk = (dir, data, func) => {
  * @example let [font_style, font_weight] = checkFontParams(file_name)
  */
 const checkFontParams = file_name => {
-    let font_weight = 'normal'
-    let font_style = 'normal'
+    let font_weight = 'normal',
+        font_style = 'normal'
     if (file_name.includes('Italic') || file_name.includes('italic')) {
         font_style = 'italic'
     }
@@ -228,10 +225,7 @@ export const fontsStyle = done => {
     DirWalk(Data.dir, Data, function(data=Data) {
         // Checking font for using in scss code
         if (getScssData().includes(data.file_name)) {
-            /**
-             * @desc Dir with current files
-             * @private
-             */
+            // Dir with current files
             let final_dir = data.dir.replace(/\/src/gi, '.')
 
             if (out[data.file_name] == undefined) {
