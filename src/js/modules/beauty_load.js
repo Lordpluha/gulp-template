@@ -1,29 +1,30 @@
 // Content upploading effect
-var AnimItems = document.getElementsByClassName('_anim-elem');
+const AnimItems = document.querySelectorAll('._anim-elem')
 
-function offset(element) {
-	var rect = element.getBoundingClientRect(),
+const offset = element => {
+	let rect = element.getBoundingClientRect(),
 		scrollLeft = window.pageXOffset,
-		scrollTop = window.pageYOffset;
-	return { top: rect.top + scrollTop, left: rect.left + scrollLeft};
+		scrollTop = window.pageYOffset
+	return { top: rect.top + scrollTop, left: rect.left + scrollLeft}
 }
 
-function animOnScroll () {
-	for (var i = 0; i < AnimItems.length; i++) {
+const animOnScroll = () => {
+	for (let i = 0; i < AnimItems.length; i++) {
 		// Текущие параметры елемента
-		var AnimItem = AnimItems[i];
-		var AnimItemHeight = AnimItem.offsetHeight;
-		var AnimItemOffset = offset(AnimItem).top;
+		let AnimItem = AnimItems[i]
+		let AnimItemHeight = AnimItem.offsetHeight
+		let AnimItemOffset = offset(AnimItem).top
 		// Часть страницы, при которой срабатывает еффект
-		var animStart = 4;
+		const animStart = 4
 		// Точка налача анимации
-		var animItemPoint = window.innerHeight - AnimItemHeight / animStart;
+		let animItemPoint = window.innerHeight - AnimItemHeight / animStart
+
 		if (AnimItemHeight > window.innerHeight) {
-			animItemPoint = window.innerHeight - window.innerHeight / animStart;
+			animItemPoint = window.innerHeight - window.innerHeight / animStart
 		}
-		if ((window.pageYOffset > AnimItemOffset - animItemPoint) && window.pageYOffset < (AnimItemOffset + AnimItemHeight))
-		{
-			AnimItem.classList.add('_active-fx');
+		if((window.pageYOffset > AnimItemOffset - animItemPoint) &&
+			window.pageYOffset < (AnimItemOffset + AnimItemHeight)) {
+				AnimItem.classList.add('_active-fx')
 		}
 	}
 }

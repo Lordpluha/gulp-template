@@ -1,4 +1,4 @@
-import { deleteAsync } from "del";
+import { deleteAsync } from "del"
 
 /**
  * @file Clean module
@@ -19,5 +19,5 @@ export const cleanBuild = () => {
      * @desc Event of clean [./dist]{@link module:configs/path.path.build}
      * @see [cleanBuild]{@link module:tasks/clean~cleanBuild}
      */
-    return deleteAsync(app.path.buildFolder);
+    return deleteAsync(app.path.buildFolder)
 }

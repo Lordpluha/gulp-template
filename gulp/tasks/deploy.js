@@ -1,6 +1,6 @@
-import { config } from '../configs/ftp.js';
-import vinylFTP from 'vinyl-ftp';
-import util from 'gulp-util';
+import { config } from '../configs/ftp.js'
+import vinylFTP from 'vinyl-ftp'
+import util from 'gulp-util'
 
 /**
  * @file Files deploy module
@@ -17,14 +17,14 @@ import util from 'gulp-util';
  * @function FtpUpload
  * @desc Ftp files deploy func
  */
-export function FtpUpload() {
+export const FtpUpload = () => {
 	/**
 	 * @event FtpUpload
 	 * @desc Event of ftp files deploy
 	 * @see [FtpUpload]{@link module:tasks/deploy~FtpUpload}
 	 */
-	config.log = util.log;
-	const ftpConnect = vinylFTP.create(config);
+	config.log = util.log
+	const ftpConnect = vinylFTP.create(config)
 	return app.gulp.src(`${app.path.buildFolder}/**/*.*`, {})
 		.pipe(app.plugins.plumber(
 			app.plugins.notify.onError({
@@ -32,5 +32,5 @@ export function FtpUpload() {
 				message: "Error <%= error.message %>"
 			})
 		))
-		.pipe(ftpConnect.dest(`/${app.path.ftp}/${app.path.rootFolder}`));
+		.pipe(ftpConnect.dest(`/${app.path.ftp}/${app.path.rootFolder}`))
 }

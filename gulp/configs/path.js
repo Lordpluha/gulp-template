@@ -1,4 +1,4 @@
-import * as nodePath from 'path';
+import * as nodePath from 'path'
 
 /**
  * @file All project pathes
@@ -12,89 +12,89 @@ import * as nodePath from 'path';
  * @package
  * @desc Root folder name
  */
-const rootFolder = nodePath.basename(nodePath.resolve());
+const rootFolder = nodePath.basename(nodePath.resolve()),
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Source folder name
  */
-const srcFolder = './src';
+srcFolder = './src',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Destination/Build folder name
  */
-const buildFolder = './dist';
+buildFolder = './dist',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Html folder name
  */
-const srcHtmlFolder = 'html';
+srcHtmlFolder = 'html',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Images folder name
  */
-const imgFolder = 'img';
+imgFolder = 'img',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc CSS folder name
  */
-const CssFolder = 'css';
+CssFolder = 'css',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc SCSS folder name
  */
-const scssFolder = 'scss';
+scssFolder = 'scss',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Fonts folder name
  */
-const fontsFolder = 'fonts';
+fontsFolder = 'fonts',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc SCSS fonts file name
  */
-const fontsScss = '_fonts.scss';
+fontsScss = '_fonts.scss',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Javascript folder name
  */
-const jsFolder = 'js';
+jsFolder = 'js',
 /**
  * @const
  * @package
  * @defaultvalue
  * @desc Certification folder name
  */
-const certFolder = 'certs';
+certFolder = 'certs',
 /**
  * @const
  * @package
  * @desc Name of certificate
  */
-const cert = 'localhost.pem';
+cert = 'localhost.pem',
 /**
  * @const
  * @package
  * @desc Name of certificate key
  */
-const key = 'localhost-key.pem';
+key = 'localhost-key.pem'
 
 //
 

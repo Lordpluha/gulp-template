@@ -1,12 +1,12 @@
 // DEV
-import fileinclude from "gulp-file-include";
-import htmlBemVadlidator from "gulp-html-bem-validator";
+import fileinclude from "gulp-file-include"
+import htmlBemVadlidator from "gulp-html-bem-validator"
 
 // PROD
-import webpHtmlNosvg from "gulp-webp-html-nosvg";
-import versionNumber from "gulp-version-number";
-import htmlMin from "gulp-htmlmin";
-import prettify from "gulp-html-prettify";
+import webpHtmlNosvg from "gulp-webp-html-nosvg"
+import versionNumber from "gulp-version-number"
+import htmlMin from "gulp-htmlmin"
+import prettify from "gulp-html-prettify"
 
 /**
  * @file Module of processing all html files of project
@@ -32,12 +32,8 @@ export const html = () => {
      * @desc Event of processing html
      * @see [html]{@link module:tasks/html~html}
      */
-    let files;
-    if (app.MainFileType == 'php') {
-        files = [app.path.src.html, app.path.src.php];
-    } else {
-        files = app.path.src.html;
-    }
+    let files
+    app.MainFileType === 'php' ? files = [app.path.src.html, app.path.src.php] : files = app.path.src.html
     return app.gulp.src(files)
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({
@@ -110,5 +106,5 @@ export const html = () => {
                 app.gulp.dest(app.path.build.html)
             )
         )
-        .pipe(app.plugins.browsersync.stream());
+        .pipe(app.plugins.browsersync.stream())
 }

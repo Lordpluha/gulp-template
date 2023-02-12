@@ -12,14 +12,14 @@
  * @function CpCerts
  * @desc Function for copying certificates from [./src/certs]{@link module:configs/path.path.src} into [./src/dist]{@link module:configs/path.path.build}
  */
-export function CpCerts() {
+export const CpCerts = () => {
 	/**
 	 * @event CpCerts
 	 * @desc Event of copying certificates
 	 * @see [CpCerts]{@link module:tasks/server~CpCerts}
 	 */
 	return app.gulp.src(app.path.src.certs)
-		.pipe(app.gulp.dest(app.path.build.certs));
+		.pipe(app.gulp.dest(app.path.build.certs))
 }
 
 /**
@@ -29,19 +29,19 @@ export function CpCerts() {
  *
  * @param {functionCallback} done
  *
- * @example server();
+ * @example server()
  */
-export const server = (done) => {
+export const server = done => {
 	/**
 	 * @event server
 	 * @desc Event of starting local server
 	 * @see [server]{@link module:tasks/server~server}
 	 */
-    const ProjectName = app.path.rootFolder;
-    const OSPanel = false;
-    const https = false;
+    const ProjectName = app.path.rootFolder
+    const OSPanel = false
+    const https = false
 
-    var browsersync_conf = {
+    const browsersync_conf = {
 		injectChanges: true,
 		watch: true,
 		// Sync of all devices and them action
@@ -69,26 +69,26 @@ export const server = (done) => {
 
     // OS Panel on/off checking
 	if (OSPanel == true) {
-		browsersync_conf.proxy = ProjectName;
-		browsersync_conf.port = 3000;
+		browsersync_conf.proxy = ProjectName
+		browsersync_conf.port = 3000
 
 		// Check main file type
 		if (app.MainFileType == 'php') {
 			browsersync_conf.serveStatic = [
 				`${app.path.build.php}`,
 				`${app.path.buildFolder}`
-			];
+			]
 		} else {
 			browsersync_conf.serveStatic = [
 				`${app.path.src.html}`,
 				`${app.path.srcFolder}`
-			];
+			]
 		}
 
 	} else {
 		browsersync_conf.server = {
 			baseDir: `${app.path.build.html}`
-		};
+		}
 	}
 
     // Https on/off check
@@ -96,10 +96,10 @@ export const server = (done) => {
 		browsersync_conf.https = {
 			key: `${app.path.build.key}`,
 			cert:`${app.path.build.cert}`
-		};
+		}
 
 	}
-    app.plugins.browsersync.init(browsersync_conf);
+    app.plugins.browsersync.init(browsersync_conf)
 }
 
 /**

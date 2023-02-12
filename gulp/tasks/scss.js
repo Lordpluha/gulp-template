@@ -1,12 +1,12 @@
 // DEV
-import dartSass from 'sass';
-import gulpSass from 'gulp-sass';
+import dartSass from 'sass'
+import gulpSass from 'gulp-sass'
 
 // PROD
-import webpcss from 'gulp-webpcss';
-import cleanCss from 'gulp-clean-css';
-import autoprefixer from 'gulp-autoprefixer';
-import groupCssMediaQueries from 'gulp-group-css-media-queries';
+import webpcss from 'gulp-webpcss'
+import cleanCss from 'gulp-clean-css'
+import autoprefixer from 'gulp-autoprefixer'
+import groupCssMediaQueries from 'gulp-group-css-media-queries'
 
 /**
  * @file Module for processing style files
@@ -26,15 +26,15 @@ import groupCssMediaQueries from 'gulp-group-css-media-queries';
  * @function sass
  * @desc Function to initialize and interact with API of [gulp-sass]{@link https://www.npmjs.com/package/gulp-sass}
  * @package
- * @example sass();
+ * @example sass()
  */
-const sass = gulpSass(dartSass);
+const sass = gulpSass(dartSass)
 
 /**
  * @function scss
  * @desc Function for processing all style files from [./src/scss]{@link module:configs/path.path.src} and deploying into [./dist/css]{@link module:configs/path.path.build}
  * @version 1.0.0
- * @example scss();
+ * @example scss()
  */
 export const scss = () => {
     /**

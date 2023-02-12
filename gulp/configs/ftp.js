@@ -8,7 +8,7 @@
  * @enum {string}
  * @desc FTP config
  */
-export let config = {
+export const config = {
 	host: "",
 	user: "",
 	password: "",

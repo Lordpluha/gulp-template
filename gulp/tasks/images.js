@@ -1,8 +1,8 @@
 // PROD plugins
-import webp from "gulp-webp";
-import imagemin from "gulp-imagemin";
-import pngquant from "imagemin-pngquant";
-import svgSprite from "gulp-svg-sprite";
+import webp from "gulp-webp"
+import imagemin from "gulp-imagemin"
+import pngquant from "imagemin-pngquant"
+import svgSprite from "gulp-svg-sprite"
 
 /**
  * @module tasks/images
@@ -44,7 +44,7 @@ export const images = () => {
         silent: app.isBuild ? 'true' : 'false',
         verbose: app.isBuild ? 'false' : 'true'
     }
-    
+
     return app.gulp.src(app.path.src.images)
         .pipe(app.plugins.newer(app.path.build.images))
         .pipe(
@@ -87,13 +87,13 @@ export const images = () => {
 
         .pipe(app.gulp.src(app.path.src.svgs))
         .pipe(app.gulp.dest(app.path.build.images))
-        .pipe(app.plugins.browsersync.stream());
+        .pipe(app.plugins.browsersync.stream())
 }
 /**
  * @function svgSprites
  * @desc .svg processing function
  */
-export function svgSprites() {
+export const svgSprites = () => {
     /**
      * @event svgSprites
      * @desc .svg processing event
@@ -114,5 +114,5 @@ export function svgSprites() {
                 }
             }
         }))
-        .pipe(app.gulp.dest(app.path.build.images));
+        .pipe(app.gulp.dest(app.path.build.images))
 }

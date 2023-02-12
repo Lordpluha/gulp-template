@@ -1,5 +1,5 @@
-import zipPlugin from 'gulp-zip';
-import { deleteAsync } from 'del';
+import zipPlugin from 'gulp-zip'
+import { deleteAsync } from 'del'
 /**
  * @file Module for archiving
  * @module tasks/zip
@@ -16,8 +16,8 @@ import { deleteAsync } from 'del';
  * @function ZipBuild
  * @desc Function for archiving [./dist]{@link module:configs/path.path.build}
  */
-export function ZipBuild() {
-	deleteAsync(`./${app.path.rootFolder}-dist.zip`);
+export const ZipBuild = () => {
+	deleteAsync(`./${app.path.rootFolder}-dist.zip`)
 	return app.gulp.src(`${app.path.buildFolder}/**/*.*`, {})
 		.pipe(app.plugins.plumber(
 			app.plugins.notify.onError({
@@ -26,15 +26,15 @@ export function ZipBuild() {
 			})
 		))
 		.pipe(zipPlugin(`${app.path.rootFolder}-dist.zip`))
-		.pipe(app.gulp.dest('./'));
+		.pipe(app.gulp.dest('./'))
 }
 
 /**
  * @function ZipSource
  * @desc Function for archiving [./src]{@link module:configs/path.path.src}
  */
-export function ZipSource() {
-	deleteAsync(`./${app.path.rootFolder}-src.zip`);
+export const ZipSource = () => {
+	deleteAsync(`./${app.path.rootFolder}-src.zip`)
 	return app.gulp.src(`${app.path.srcFolder}/**/*.*`, {})
 		.pipe(app.plugins.plumber(
 			app.plugins.notify.onError({
@@ -43,15 +43,15 @@ export function ZipSource() {
 			})
 		))
 		.pipe(zipPlugin(`${app.path.rootFolder}-src.zip`))
-		.pipe(app.gulp.dest('./'));
+		.pipe(app.gulp.dest('./'))
 }
 
 /**
  * @function Zip
  * @desc Function for archiving all project
  */
-export function Zip() {
-	deleteAsync(`./${app.path.rootFolder}.zip`);
+export const Zip = () => {
+	deleteAsync(`./${app.path.rootFolder}.zip`)
 	return app.gulp.src(`${app.path.rootFolder}/**/*.*`, {})
 		.pipe(app.plugins.plumber(
 			app.plugins.notify.onError({
@@ -60,5 +60,5 @@ export function Zip() {
 			})
 		))
 		.pipe(zipPlugin(`${app.path.rootFolder}.zip`))
-		.pipe(app.gulp.dest('./'));
+		.pipe(app.gulp.dest('./'))
 }
