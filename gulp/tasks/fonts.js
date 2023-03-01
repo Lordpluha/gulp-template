@@ -22,55 +22,52 @@ import ttf2woff2 from 'gulp-ttf2woff2'
  * @desc Fonts convert from .otf to .ttf in [./src/fonts]{@link module:configs/path.path.src}
  * @example otfToTtf()
  */
-export const otfToTtf = () => {
+export const otfToTtf = () =>
     /**
      * @event otfToTtf
      * @desc Event of fonts converting from .otf to .ttf
      * @see [otfToTtf]{@link module:tasks/fonts~otfToTtf}
      */
-    return app.gulp.src(`${app.path.src.fontsDir}/**/*.otf`)
+    app.gulp.src(`${app.path.src.fontsDir}/**/*.otf`)
         .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(fonter({
             formats: ['ttf']
         }))
         .pipe(app.gulp.dest(app.path.src.fontsDir))
-}
 
 /**
  * @function ttfToWoff
  * @desc Fonts convert from .ttf to .woff in [./src/fonts]{@link module:configs/path.path.src}
  * @example ttfToWoff()
  */
-export const ttfToWoff = () => {
+export const ttfToWoff = () =>
     /**
      * @event ttfToWoff
      * @desc Event of fonts converting from .ttf to .woff
      * @see [ttfToWoff]{@link module:tasks/fonts~ttfToWoff}
      */
-    return app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
+    app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
         .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(fonter({
             formats: ['woff']
         }))
         .pipe(app.gulp.dest(app.path.src.fontsDir))
-}
 
 /**
  * @function ttfToWoff2
  * @desc Fonts convert from .ttf to .woff2 in [./src/fonts]{@link module:configs/path.path.src}
  * @example ttfToWoff2()
  */
-export const ttfToWoff2 = () => {
+export const ttfToWoff2 = () =>
     /**
      * @event ttfToWoff2
      * @desc Event of fonts converting from .ttf to .woff2
      * @see [ttfToWoff2]{@link module:tasks/fonts~ttfToWoff2}
      */
-    return app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
+    app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
         .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(ttf2woff2())
         .pipe(app.gulp.dest(app.path.src.fontsDir))
-}
 
 /**
  * @function getScssData

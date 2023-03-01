@@ -7,6 +7,7 @@ import rename from 'gulp-rename'
 import fs from 'fs'
 import ifPlugin from 'gulp-if'
 import sourcemaps from 'gulp-sourcemaps'
+import { deleteAsync } from 'del'
 
 /**
  * @file Global used plugins module
@@ -33,5 +34,6 @@ export const plugins = {
     rename: rename,
     fs: fs,
     if: ifPlugin,
-    sourcemaps: sourcemaps
+    sourcemaps: sourcemaps,
+    del: deleteAsync
 }

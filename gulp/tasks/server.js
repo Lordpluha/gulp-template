@@ -12,15 +12,14 @@
  * @function CpCerts
  * @desc Function for copying certificates from [./src/certs]{@link module:configs/path.path.src} into [./src/dist]{@link module:configs/path.path.build}
  */
-export const CpCerts = () => {
+export const CpCerts = () =>
 	/**
 	 * @event CpCerts
 	 * @desc Event of copying certificates
 	 * @see [CpCerts]{@link module:tasks/server~CpCerts}
 	 */
-	return app.gulp.src(app.path.src.certs)
+	app.gulp.src(app.path.src.certs)
 		.pipe(app.gulp.dest(app.path.build.certs))
-}
 
 /**
  * @function server
@@ -37,9 +36,9 @@ export const server = done => {
 	 * @desc Event of starting local server
 	 * @see [server]{@link module:tasks/server~server}
 	 */
-    const ProjectName = app.path.rootFolder
-    const OSPanel = false
-    const https = false
+    const ProjectName = app.path.rootFolder,
+		OSPanel = false,
+		https = false
 
     const browsersync_conf = {
 		injectChanges: true,

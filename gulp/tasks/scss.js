@@ -36,13 +36,13 @@ const sass = gulpSass(dartSass)
  * @version 1.0.0
  * @example scss()
  */
-export const scss = () => {
+export const scss = () =>
     /**
      * @event processScss
      * @desc Event of processing all styles
      * @see [scss]{@link module:tasks/scss~scss}
      */
-    return app.gulp.src(app.path.src.scss, { sourcemaps: app.isDev })
+    app.gulp.src(app.path.src.scss, { sourcemaps: app.isDev })
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({
                 title: "SCSS",
@@ -96,4 +96,3 @@ export const scss = () => {
         )
         .pipe(app.gulp.dest(app.path.build.css))
         .pipe(app.plugins.browsersync.stream())
-}
