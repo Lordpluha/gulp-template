@@ -26,15 +26,13 @@ import prettify from "gulp-html-prettify"
  * @desc Processing and deploying in [./dist/]{@link module:configs/path.path.build} all html from [./src/html]{@link module:configs/path.path.src}
  * @version 1.0.0
  */
-export const html = () => {
+export const html = () =>
     /**
      * @event processHtml
      * @desc Event of processing html
      * @see [html]{@link module:tasks/html~html}
      */
-    let files
-    app.MainFileType === 'php' ? files = [app.path.src.html, app.path.src.php] : files = app.path.src.html
-    return app.gulp.src(files)
+    app.gulp.src(app.MainFileType === 'php' ? [app.path.src.html, app.path.src.php] : app.path.src.html)
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({
                 title: "HTML",
@@ -107,4 +105,3 @@ export const html = () => {
             )
         )
         .pipe(app.plugins.browsersync.stream())
-}

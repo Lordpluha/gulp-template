@@ -5,7 +5,6 @@
  * @version 1.0.0
  *
  * @requires gulp
- * @requires typescript
  * @requires jsdoc
  *
  * @requires configs/plugins
@@ -32,6 +31,7 @@
  *
  * @todo ▶ Добавить bower вместо npm (@since 2.0.0)
  * @todo ▶ <b>{@link module:tasks/uploads}</b>Сделать функции для выгрузки файлов на другие типы удаленных файловых систем
+ * @todo ▶ Удалить ненужные event в документации
  *
  * @copyright Teslyuk Vlad 2020
  * @license GNU

@@ -93,13 +93,13 @@ export const images = () => {
  * @function svgSprites
  * @desc .svg processing function
  */
-export const svgSprites = () => {
+export const svgSprites = () =>
     /**
      * @event svgSprites
      * @desc .svg processing event
      * @see [svgSprites]{@link module:tasks/images~svgSprites}
      */
-    return app.gulp.src(app.path.src.svgs)
+    app.gulp.src(app.path.src.svgs)
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({
                 title: "SVG",
@@ -115,4 +115,3 @@ export const svgSprites = () => {
             }
         }))
         .pipe(app.gulp.dest(app.path.build.images))
-}
