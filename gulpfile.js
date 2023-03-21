@@ -5,6 +5,7 @@
  * @version 1.0.0
  *
  * @requires gulp
+ * @requires typescript
  * @requires jsdoc
  *
  * @requires configs/plugins
