@@ -99,5 +99,8 @@ desktop.ini
 # *.conf
 *.htaccess
 
-# Dependency file
-package-lock.json
+# Документация
+docs/
+
+# Файл версий
+gulp/versions.json
