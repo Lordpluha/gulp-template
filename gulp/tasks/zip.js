@@ -2,7 +2,7 @@ import zipPlugin from 'gulp-zip'
 /**
  * @file Module for archiving
  * @module tasks/zip
- * 
+ *
  * @requires gulp-zip
  *
  * @exports ZipBuild

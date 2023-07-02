@@ -1,8 +1,5 @@
-// DEV
-import dartSass from 'sass'
+import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass'
-
-// PROD
 import webpcss from 'gulp-webpcss'
 import cleanCss from 'gulp-clean-css'
 import autoprefixer from 'gulp-autoprefixer'

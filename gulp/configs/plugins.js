@@ -7,7 +7,7 @@ import rename from 'gulp-rename'
 import fs from 'fs'
 import ifPlugin from 'gulp-if'
 import sourcemaps from 'gulp-sourcemaps'
-import { deleteAsync } from 'del'
+import { deleteAsync } from "del"
 
 /**
  * @file Global used plugins module
@@ -21,6 +21,7 @@ import { deleteAsync } from 'del'
  * @requires gulp-rename
  * @requires fs
  * @requires gulp-if
+ * @requires del~deleteAsync
  *
  * @exports plugins
  */

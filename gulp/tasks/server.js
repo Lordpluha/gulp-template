@@ -38,38 +38,36 @@ export const server = done => {
 	 */
     const ProjectName = app.path.rootFolder,
 		OSPanel = false,
-		https = false
+		https = false,
+		browsersync_conf = {
+			injectChanges: true,
+			watch: true,
+			// Sync of all devices and them action
+			ghostMode: {
+				clicks: true,
+				forms: true,
+				scroll: true
+			},
+			scrollProportionally: true,
+			codeSync: true,
 
-    const browsersync_conf = {
-		injectChanges: true,
-		watch: true,
-		// Sync of all devices and them action
-		ghostMode: {
-			clicks: true,
-			forms: true,
-			scroll: true
-		},
-		scrollProportionally: true,
-		codeSync: true,
+			reloadOnRestart: true,
+			// debug || info
+			logLevel: 'info',
+			logPrefix: ProjectName,
+			logConnections: true,
+			logFileChanges: true,
 
-		reloadOnRestart: true,
-        // debug || info
-		logLevel: 'info',
-		logPrefix: ProjectName,
-		logConnections: true,
-		logFileChanges: true,
-
-		open: true,
-		notify: true,
-		timestamps: true,
-		online: true,
-		minify: false
-	}
+			open: true,
+			notify: true,
+			timestamps: true,
+			online: true,
+			minify: false
+		}
 
     // OS Panel on/off checking
 	if (OSPanel == true) {
-		browsersync_conf.proxy = ProjectName
-		browsersync_conf.port = 3000
+		[browsersync_conf.proxy, browsersync_conf.port] = [ProjectName, 3000]
 
 		// Check main file type
 		if (app.MainFileType == 'php') {
@@ -96,7 +94,6 @@ export const server = done => {
 			key: `${app.path.build.key}`,
 			cert:`${app.path.build.cert}`
 		}
-
 	}
     app.plugins.browsersync.init(browsersync_conf)
 }

@@ -1,14 +1,16 @@
-// PROD plugins
-import webp from "gulp-webp"
-import imagemin from "gulp-imagemin"
-import pngquant from "imagemin-pngquant"
-import svgSprite from "gulp-svg-sprite"
+import webp from "gulp-webp";
+import imagemin from "gulp-imagemin";
+import pngquant from "imagemin-pngquant";
+import svgSprite from "gulp-svg-sprite";
+import minWebp from 'imagemin-webp';
 
 /**
  * @module tasks/images
  * @requires gulp-webp
  * @requires gulp-imagemin
  * @requires imagemin-pngquant
+ * @requires gulp-svg-sprite
+ * @requires imagemin-webp
  *
  * @exports images
  * @exports svgSprites
@@ -74,13 +76,7 @@ export const images = () => {
         .pipe(
             app.plugins.if(
                 app.isBuild,
-                imagemin(imagemin_cfg)
-            )
-        )
-        .pipe(
-            app.plugins.if(
-                app.isBuild,
-                imagemin([pngquant()], imagemin_cfg)
+                imagemin([minWebp(), pngquant()], imagemin_cfg)
             )
         )
         .pipe(app.gulp.dest(app.path.build.images))

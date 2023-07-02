@@ -1,12 +1,9 @@
-// DEV
-import fileinclude from "gulp-file-include"
-import htmlBemVadlidator from "gulp-html-bem-validator"
-
-// PROD
-import webpHtmlNosvg from "gulp-webp-html-nosvg"
-import versionNumber from "gulp-version-number"
-import htmlMin from "gulp-htmlmin"
-import prettify from "gulp-html-prettify"
+import fileinclude from "gulp-file-include";
+import htmlBemVadlidator from "gulp-html-bem-validator";
+import webpHtmlNosvg from "gulp-webp-html-nosvg";
+import versionNumber from "gulp-version-number";
+import htmlMin from "gulp-htmlmin";
+import prettify from "gulp-html-prettify";
 
 /**
  * @file Module of processing all html files of project
@@ -17,6 +14,7 @@ import prettify from "gulp-html-prettify"
  * @requires gulp-version-number
  * @requires gulp-html-bem-validator
  * @requires gulp-htmlmin
+ * @requires gulp-html-prettify
  *
  * @exports html
  */
@@ -104,4 +102,4 @@ export const html = () =>
                 app.gulp.dest(app.path.build.html)
             )
         )
-        .pipe(app.plugins.browsersync.stream())
+        .pipe(app.plugins.browsersync.stream());

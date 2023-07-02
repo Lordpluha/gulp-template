@@ -1,6 +1,8 @@
 import fonter from 'gulp-fonter'
 import ttf2woff2 from 'gulp-ttf2woff2'
 
+// @ts-check
+
 /**
  * @file Fonts processing module
  * @module tasks/fonts
@@ -121,7 +123,7 @@ const DirWalk = (dir, data, func) => {
  *
  * @example let [font_style, font_weight] = checkFontParams(file_name)
  */
-const checkFontParams = (file_name) => {
+const checkFontParams = file_name => {
     let font_weight = 'normal', font_style = 'normal'
     if (file_name.includes('Italic') || file_name.includes('italic')) font_style = 'italic'
 
@@ -159,8 +161,8 @@ const checkFontParams = (file_name) => {
  * @param {functionCallback} done default callback function
  * @example fontsStyle()
  * done()
- */
-export const fontsStyle = (done) => {
+*/
+export const fontsStyle = done => {
     /**
      * @event fontsStyle
      * @desc Event of writing fonts in scss
@@ -212,7 +214,7 @@ export const fontsStyle = (done) => {
  * @param {functionCallback} done default callback function
  * @example fontsCp()
  */
-export const fontsCp = (done) => {
+export const fontsCp = done => {
     /**
      * @event fontsCp
      * @desc Event of copying fonts

@@ -1,7 +1,7 @@
 /**
  * @file Clean module
  * @module tasks/clean
- * @version 1.0.0
+ * 
  * @exports cleanBuild
  */
 
