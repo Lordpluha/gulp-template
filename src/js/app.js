@@ -1,14 +1,16 @@
-import Swiper, { Navigation, Pegination} from 'swiper'
-import { animOnScroll } from './modules/beauty_load.js'
-import { ibg } from './modules/ibg.js'
-import './modules/testWebp.js'
+// import Swiper, { Navigation, Pegination} from 'swiper'
+import { closePreloader } from './modules/design.js'
+import testWebP from './modules/testWebp.js'
+import beautyLoadInit from './modules/beauty_load.js'
 
-const swiper = new Swiper()
+document.addEventListener('DOMContentLoaded', () => {
+	// Testing browser for supports webp
+	testWebP(support => support ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'))
+})
 
-// Красивая загрузка елементов страницы
-window.onDOMContentLoaded = (e) => ibg()
-
-window.onload = (e) => {
-	setTimeout(animOnScroll, 300)
-	window.addEventListener('scroll', animOnScroll)
+window.onload = () => {
+	// Preloader
+	closePreloader()
+	// Beauty load
+	beautyLoadInit()
 }

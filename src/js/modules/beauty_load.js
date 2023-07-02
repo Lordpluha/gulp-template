@@ -1,32 +1,35 @@
 // Content upploading effect
-const AnimItems = document.querySelectorAll('._anim-elem')
+const AnimItems = document.getElementsByClassName('_anim-elem');
 
-const offset = element => {
-	let rect = element.getBoundingClientRect(),
-		scrollLeft = window.pageXOffset,
-		scrollTop = window.pageYOffset
-	return { top: rect.top + scrollTop, left: rect.left + scrollLeft}
+function offset(element) {
+	var rect = element.getBoundingClientRect();
+	return { top: rect.top + window.pageYOffset, left: rect.left + window.pageXOffset};
 }
 
-const animOnScroll = () => {
-	for (let i = 0; i < AnimItems.length; i++) {
+function animOnScroll () {
+	for (var i = 0; i < AnimItems.length; i++) {
 		// Текущие параметры елемента
-		let AnimItem = AnimItems[i]
-		let AnimItemHeight = AnimItem.offsetHeight
-		let AnimItemOffset = offset(AnimItem).top
+		const AnimItem = AnimItems[i];
+		const AnimItemHeight = AnimItem.offsetHeight;
+		const AnimItemOffset = offset(AnimItem).top;
 		// Часть страницы, при которой срабатывает еффект
-		const animStart = 4
+		const animStart = 3;
 		// Точка налача анимации
-		let animItemPoint = window.innerHeight - AnimItemHeight / animStart
-
+		let animItemPoint = window.innerHeight - AnimItemHeight / animStart;
 		if (AnimItemHeight > window.innerHeight) {
-			animItemPoint = window.innerHeight - window.innerHeight / animStart
+			animItemPoint = window.innerHeight - window.innerHeight / animStart;
 		}
-		if((window.pageYOffset > AnimItemOffset - animItemPoint) &&
-			window.pageYOffset < (AnimItemOffset + AnimItemHeight)) {
-				AnimItem.classList.add('_active-fx')
+		if ((window.pageYOffset > AnimItemOffset - animItemPoint) &&
+			 window.pageYOffset < (AnimItemOffset + AnimItemHeight))
+		{
+			AnimItem.classList.add('_active-fx');
 		}
 	}
 }
 
-export { animOnScroll }
+const beautyLoadInit = () => {
+	setTimeout(animOnScroll, 300)
+	window.addEventListener('scroll', animOnScroll)
+}
+
+export default beautyLoadInit;
