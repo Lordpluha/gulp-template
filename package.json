@@ -72,6 +72,6 @@
     "vinyl-ftp": "^0.6.1"
   },
   "optionalDependencies": {
-    "swiper": "^10.0.4"
+    "swiper": "^10.2.0"
   }
 }
