@@ -33,6 +33,8 @@
  * @todo ▶ Добавить bower вместо npm (@since 2.0.0)
  * @todo ▶ <b>{@link module:tasks/uploads}</b>Сделать функции для выгрузки файлов на другие типы удаленных файловых систем
  * @todo ▶ Удалить ненужные event в документации
+ * @todo ▶ Улучшить код с помощью уже готового кода в проектах (CabHub.layout)
+ * @todo ▶ Улучшить внешний вид и информативность документации (как в коде так и на страничке документации)
  *
  * @copyright Teslyuk Vlad 2020
  * @license GNU
@@ -78,14 +80,9 @@ import { FtpUpload } from "./gulp/tasks/deploy.js"
 /**
  * @function watcher
  * @desc Files wathcer
- * @fires processScss
- * @fires processHtml
- * @fires processImages
- * @fires processJS
  */
 function watcher() {
     /**
-     * @event watchFiles
      * @desc Событие наблюдения за файлами .scss, .html, картинками и .js
      */
     gulp.watch(path.watch.scss, scss)
@@ -99,30 +96,16 @@ function watcher() {
  * @async
  *
  * @desc Fonts Processing func
- *
- * @event FontsProcess
- *
- * @fires otfToTtf
- * @fires ttfToWoff
- * @fires ttfToWoff2
- * @fires fontsStyle
- * @fires fontsCp
- */
-const fonts = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2), fontsStyle, fontsCp)
+*/
+const fonts = gulp.series(fontsStyle, fontsCp)
+
+const fontsConverter = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2))
 
 /**
  * @function FilesProcess
  * @async
  *
  * @desc Files Processing func
- *
- * @event FilesProcess
- *
- * @fires FontsProcess
- * @fires processScss
- * @fires processHtml
- * @fires processImages
- * @fires processJS
  */
 const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js)
 
@@ -131,55 +114,36 @@ const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js)
  * @async
  *
  * @desc Switch to dev mode func
- *
- * @event StartDev
- *
- * @fires cleanBuild
- * @fires watchFiles
- * @fires CpCerts
- * @fires server
- * @fires FilesProcess
  */
 export const dev = gulp.series(cleanBuild, FilesProcess, gulp.parallel(watcher, gulp.series(CpCerts, server)))
 
 /**
  * @function prod
  * @desc Swhitch to production mode func
- * @event StartProduction
- *
- * @fires cleanBuild
- * @fires FilesProcess
  */
-export const prod = gulp.series(cleanBuild, FilesProcess)
+export const prod = gulp.series(cleanBuild, gulp.series(fontsConverter, FilesProcess))
 
 /**
  * @desc Production mode UI
- * @fires StartProduction
  */
 gulp.task('prod', prod)
 
 /**
  * @desc Developement mode UI
- * @fires StartDev
  */
 gulp.task('default', dev)
 
 /**
  * @desc Archivate UI
- * @fires cleanBuild
- * @fires FilesProcess
- * @fires ZipBuild
  */
 gulp.task('zip', gulp.series(cleanBuild, FilesProcess, ZipBuild))
 
 /**
  * @desc Project deploy UI
- * @fires cleanBuild
- * @fires FilesProcess
- * @fires ZipBuild
- * @fires FtpUpload
  */
 gulp.task('deploy', gulp.series(cleanBuild, FilesProcess, ZipBuild, FtpUpload))
+
+gulp.task('fontsConverter', fontsConverter)
 
 /**
  * @typedef plugin

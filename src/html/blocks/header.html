@@ -1,3 +1,5 @@
 <header>
-    Header
+    <div class="container">
+        Header
+    </div>
 </header>

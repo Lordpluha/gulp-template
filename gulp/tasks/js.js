@@ -14,11 +14,6 @@ import webpack from 'webpack-stream'
  * @desc Processing all js files from [./src/js]{@link module:configs/path.path.src} and deploying in [./dist/js]{@link module:configs/path.path.build}
  */
 export const js = () =>
-    /**
-     * @event processJS
-     * @desc Event of processing js files
-     * @see [js]{@link module:tasks/js~js}
-     */
     app.gulp.src(app.path.src.js, { sourcemaps: app.isDev })
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({

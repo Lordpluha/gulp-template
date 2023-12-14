@@ -1,9 +1,9 @@
-import fileinclude from "gulp-file-include";
-import htmlBemVadlidator from "gulp-html-bem-validator";
-import webpHtmlNosvg from "gulp-webp-html-nosvg";
-import versionNumber from "gulp-version-number";
-import htmlMin from "gulp-htmlmin";
-import prettify from "gulp-html-prettify";
+import fileinclude from "gulp-file-include"
+import htmlBemVadlidator from "gulp-html-bem-validator"
+import webpHtmlNosvg from "gulp-webp-html-nosvg"
+import versionNumber from "gulp-version-number"
+import htmlMin from "gulp-htmlmin"
+import prettify from "gulp-html-prettify"
 
 /**
  * @file Module of processing all html files of project
@@ -25,11 +25,6 @@ import prettify from "gulp-html-prettify";
  * @version 1.0.0
  */
 export const html = () =>
-    /**
-     * @event processHtml
-     * @desc Event of processing html
-     * @see [html]{@link module:tasks/html~html}
-     */
     app.gulp.src(app.MainFileType === 'php' ? [app.path.src.html, app.path.src.php] : app.path.src.html)
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({

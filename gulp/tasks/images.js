@@ -1,8 +1,8 @@
-import webp from "gulp-webp";
-import imagemin from "gulp-imagemin";
-import pngquant from "imagemin-pngquant";
-import svgSprite from "gulp-svg-sprite";
-import minWebp from 'imagemin-webp';
+import webp from "gulp-webp"
+import imagemin from "gulp-imagemin"
+import pngquant from "imagemin-pngquant"
+import svgSprite from "gulp-svg-sprite"
+import minWebp from 'imagemin-webp'
 
 /**
  * @module tasks/images
@@ -21,13 +21,7 @@ import minWebp from 'imagemin-webp';
  * @desc Processing and creating .webp copies of all images from [./src/img]{@link module:configs/path.path.src} to [./dist/img]{@link module:configs/path.path.build}
  * @version 1.0.0
  */
-export const images = () => {
-    /**
-     * @event processImages
-     * @desc Event of images processing
-     * @see [images]{@link module:tasks/images~images}
-     */
-
+export const images = () =>
     /**
      * @type {object}
      * @desc Config for [gulp-imagemin]{@link https://www.npmjs.com/package/gulp-imagemin}
@@ -38,16 +32,7 @@ export const images = () => {
      * @prop {boolean} silent Don't log the number of images that have been minified
      * @prop {boolean} verbose Enabling this will log info on every image passed to [gulp-imagemin]{@link https://www.npmjs.com/package/gulp-imagemin}
      */
-    const imagemin_cfg = {
-        progressive: true,
-        interlaced: true,
-        quality: 100,
-        optimizationLevel: 3,
-        silent: app.isBuild ? 'true' : 'false',
-        verbose: app.isBuild ? 'false' : 'true'
-    }
-
-    return app.gulp.src(app.path.src.images)
+    app.gulp.src(app.path.src.images)
         .pipe(app.plugins.newer(app.path.build.images))
         .pipe(
             app.plugins.if(
@@ -76,7 +61,14 @@ export const images = () => {
         .pipe(
             app.plugins.if(
                 app.isBuild,
-                imagemin([minWebp(), pngquant()], imagemin_cfg)
+                imagemin([minWebp(), pngquant()], {
+                    progressive: true,
+                    interlaced: true,
+                    quality: 100,
+                    optimizationLevel: 3,
+                    silent: app.isBuild ? 'true' : 'false',
+                    verbose: app.isBuild ? 'false' : 'true'
+                })
             )
         )
         .pipe(app.gulp.dest(app.path.build.images))
@@ -84,17 +76,12 @@ export const images = () => {
         .pipe(app.gulp.src(app.path.src.svgs))
         .pipe(app.gulp.dest(app.path.build.images))
         .pipe(app.plugins.browsersync.stream())
-}
+
 /**
  * @function svgSprites
  * @desc .svg processing function
  */
 export const svgSprites = () =>
-    /**
-     * @event svgSprites
-     * @desc .svg processing event
-     * @see [svgSprites]{@link module:tasks/images~svgSprites}
-     */
     app.gulp.src(app.path.src.svgs)
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({

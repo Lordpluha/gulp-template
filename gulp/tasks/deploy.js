@@ -18,11 +18,6 @@ import util from 'gulp-util'
  * @desc Ftp files deploy func
  */
 export const FtpUpload = () => {
-	/**
-	 * @event FtpUpload
-	 * @desc Event of ftp files deploy
-	 * @see [FtpUpload]{@link module:tasks/deploy~FtpUpload}
-	 */
 	config.log = util.log
 	const ftpConnect = vinylFTP.create(config)
 	return app.gulp.src(`${app.path.buildFolder}/**/*.*`, {})

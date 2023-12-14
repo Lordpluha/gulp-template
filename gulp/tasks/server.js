@@ -13,11 +13,6 @@
  * @desc Function for copying certificates from [./src/certs]{@link module:configs/path.path.src} into [./src/dist]{@link module:configs/path.path.build}
  */
 export const CpCerts = () =>
-	/**
-	 * @event CpCerts
-	 * @desc Event of copying certificates
-	 * @see [CpCerts]{@link module:tasks/server~CpCerts}
-	 */
 	app.gulp.src(app.path.src.certs)
 		.pipe(app.gulp.dest(app.path.build.certs))
 
@@ -31,11 +26,6 @@ export const CpCerts = () =>
  * @example server()
  */
 export const server = done => {
-	/**
-	 * @event server
-	 * @desc Event of starting local server
-	 * @see [server]{@link module:tasks/server~server}
-	 */
     const ProjectName = app.path.rootFolder,
 		OSPanel = false,
 		https = false,

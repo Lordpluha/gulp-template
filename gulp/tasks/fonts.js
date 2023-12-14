@@ -1,8 +1,6 @@
 import fonter from 'gulp-fonter'
 import ttf2woff2 from 'gulp-ttf2woff2'
 
-// @ts-check
-
 /**
  * @file Fonts processing module
  * @module tasks/fonts
@@ -23,14 +21,9 @@ import ttf2woff2 from 'gulp-ttf2woff2'
  * @example otfToTtf()
  */
 export const otfToTtf = () =>
-    /**
-     * @event otfToTtf
-     * @desc Event of fonts converting from .otf to .ttf
-     * @see [otfToTtf]{@link module:tasks/fonts~otfToTtf}
-     */
     app.gulp.src(`${app.path.src.fontsDir}/**/*.otf`)
-        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(fonter({formats: ['ttf']}))
+        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(app.gulp.dest(app.path.src.fontsDir))
 
 /**
@@ -39,14 +32,9 @@ export const otfToTtf = () =>
  * @example ttfToWoff()
  */
 export const ttfToWoff = () =>
-    /**
-     * @event ttfToWoff
-     * @desc Event of fonts converting from .ttf to .woff
-     * @see [ttfToWoff]{@link module:tasks/fonts~ttfToWoff}
-     */
     app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
-        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(fonter({formats: ['woff']}))
+        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(app.gulp.dest(app.path.src.fontsDir))
 
 /**
@@ -55,14 +43,9 @@ export const ttfToWoff = () =>
  * @example ttfToWoff2()
  */
 export const ttfToWoff2 = () =>
-    /**
-     * @event ttfToWoff2
-     * @desc Event of fonts converting from .ttf to .woff2
-     * @see [ttfToWoff2]{@link module:tasks/fonts~ttfToWoff2}
-     */
     app.gulp.src(`${app.path.src.fontsDir}/**/*.ttf`)
-        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(ttf2woff2())
+        .pipe(app.plugins.newer(app.path.src.fontsDir))
         .pipe(app.gulp.dest(app.path.src.fontsDir))
 
 /**
@@ -73,7 +56,12 @@ export const ttfToWoff2 = () =>
  *
  * @example const variable = getScssData()
  */
-const getScssData = () => app.plugins.fs.readdirSync(app.path.src.scssDir, ()=>{}).reduce((scssData, file) => file != app.path.src.fontScss ? (scssData += app.plugins.fs.readFileSync(app.path.src.scssDir + '/' + file, 'utf-8')): (scssData = scssData), '')
+const getScssData = () =>
+    app.plugins.fs.readdirSync(app.path.src.scssDir,()=>{})
+        .reduce((scssData, file) =>
+            file != app.path.src.fontScss
+                ?? (scssData += app.plugins.fs.readFileSync(app.path.src.scssDir + '/' + file, 'utf-8')),
+        '')
 
 /**
  * @function DirWalk
@@ -102,7 +90,7 @@ const DirWalk = (dir, data, func) => {
                 data.file_ext, data.file_name, data.dir, data.name = file_ext, file_name, dir, name
 
                 // Cheking file extension
-                if (['ttf','woff','woff2','otf','eot','eot?#iefix',].includes(file_ext)) func()
+                ['ttf','woff','woff2','otf','eot','eot?#iefix'].includes(file_ext) ?? func()
             }
         })
 }
@@ -124,32 +112,30 @@ const DirWalk = (dir, data, func) => {
  * @example let [font_style, font_weight] = checkFontParams(file_name)
  */
 const checkFontParams = file_name => {
-    let font_weight = 'normal', font_style = 'normal'
-    if (file_name.includes('Italic') || file_name.includes('italic')) font_style = 'italic'
+    let font_weight = 'normal',
+        font_style = (file_name.includes('Italic') || file_name.includes('italic')) ? 'italic' : 'normal'
 
-    if (file_name.includes('Thin') || file_name.includes('thin')) font_weight = 100
-    else if (file_name.includes('Light') || file_name.includes('light')) {
-        font_weight = 300
-        if ( file_name.includes('Extra') || file_name.includes('extra') || file_name.includes('Ultra') || file_name.includes('ultra')) {
-            font_weight = 200
-        }
-    } else if ( file_name.includes('Normal') || file_name.includes('normal') || file_name.includes('Regular') || file_name.includes('regular')) {
-        font_weight = 400
-    } else if (file_name.includes('Medium') || file_name.includes('medium')) {
-        font_weight = 500
-    } else if (file_name.includes('Bold') || file_name.includes('bold')) {
+    // "Exp" decipher as "expression"
+    const thinExp = file_name.includes('Thin') || file_name.includes('thin'),
+        lightExp = file_name.includes('Light') || file_name.includes('light'),
+        extraUltraExp = file_name.includes('Extra') || file_name.includes('extra') || file_name.includes('Ultra') || file_name.includes('ultra'),
+        normalRegularExp = file_name.includes('Normal') || file_name.includes('normal') || file_name.includes('Regular') || file_name.includes('regular'),
+        mediumExp = file_name.includes('Medium') || file_name.includes('medium'),
+        boldExp = file_name.includes('Bold') || file_name.includes('bold'),
+        semiDemiExp = file_name.includes('Semi') || file_name.includes('semi') || file_name.includes('Demi') || file_name.includes('demi'),
+        blackHeavyExp = file_name.includes('Black') || file_name.includes('black') || file_name.includes('Heavy') || file_name.includes('heavy'),
+        bolderExp = file_name.includes('Bolder') || file_name.includes('bolder')
+
+    if (thinExp) font_weight = 100
+    else if (lightExp) font_weight = extraUltraExp ? 200 : 300
+    else if (normalRegularExp) font_weight = 400
+    else if (mediumExp) font_weight = 500
+    else if (boldExp) {
         font_weight = 700
-        if ( file_name.includes('Semi') || file_name.includes('semi') || file_name.includes('Demi') || file_name.includes('demi')) {
-            font_weight = 600
-        } else if ( file_name.includes('Extra') || file_name.includes('extra') || file_name.includes('Ultra') || file_name.includes('ultra')) {
-            font_weight = 800
-        }
-    } else if ( file_name.includes('Black') || file_name.includes('black') || file_name.includes('Heavy') || file_name.includes('heavy')) {
-        font_weight = 900
-        if ( file_name.includes('Extra') || file_name.includes('extra') || file_name.includes('Ultra') || file_name.includes('ultra')) {
-            font_weight = 950
-        }
-    } else if (file_name.includes('Bolder') || file_name.includes('bolder')) font_weight = 1000
+        if (semiDemiExp) font_weight = 600
+        else if (extraUltraExp) font_weight = 800
+    } else if (blackHeavyExp) font_weight = extraUltraExp ? 950 : 900
+    else if (bolderExp) font_weight = 1000
     return [font_style, font_weight]
 }
 
@@ -163,11 +149,6 @@ const checkFontParams = file_name => {
  * done()
 */
 export const fontsStyle = done => {
-    /**
-     * @event fontsStyle
-     * @desc Event of writing fonts in scss
-     * @see [fontsStyle]{@link module:tasks/fonts~fontsStyle}
-     */
     /**
      * @namespace
      * @private
@@ -188,10 +169,7 @@ export const fontsStyle = done => {
             // Dir with current files
             const final_dir = data.dir.replace(/\/src/gi, '.')
 
-            if (out[data.file_name] == undefined) {
-                out[data.file_name] = {}
-                out[data.file_name][final_dir] = []
-            }
+            out[data.file_name] = out[data.file_name] || {[final_dir]: []}
             out[data.file_name][final_dir].push(data.file_ext)
         }
     })
@@ -216,11 +194,6 @@ export const fontsStyle = done => {
  */
 export const fontsCp = done => {
     /**
-     * @event fontsCp
-     * @desc Event of copying fonts
-     * @see [fontsCp]{@link module:tasks/fonts~fontsCp}
-     */
-    /**
      * @namespace
      * @private
      * @type {Object}
@@ -230,10 +203,9 @@ export const fontsCp = done => {
     app.plugins.fs.mkdirSync(app.path.build.fonts, { recursive: true })
     DirWalk(Data.dir, Data, (data = Data) => {
         // Cheking for using font in code
-        if (getScssData().includes(data.file_name)) {
-            app.gulp.src(data.name)
+        getScssData().includes(data.file_name)
+            ?? app.gulp.src(data.name)
                 .pipe(app.gulp.dest(app.path.build.fonts + '/' + data.dir.split('/')[data.dir.split('/').length - 1]))
-        }
     })
     done()
 }
