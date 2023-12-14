@@ -10,8 +10,7 @@
     "prod": "gulp prod --build",
     "zip": "gulp zip --build",
     "deploy": "gulp deploy --build",
-    "docs": "jsdoc --configure jsdoc.json",
-    "fontsConverter": "gulp fontsConverter"
+    "docs": "jsdoc --configure jsdoc.json"
   },
   "keywords": [
     "gulp",
@@ -61,10 +60,9 @@
     "gulp-webp-html-nosvg": "^1.1.1",
     "gulp-webpcss": "^1.1.1",
     "imagemin-pngquant": "^9.0.2",
-    "normalize.css": "^8.0.1",
-    "sass": "^1.63.6",
+    "sass": "^1.68.0",
     "webp-converter": "2.2.3",
-    "webpack": "^5.88.1",
+    "webpack": "^5.88.2",
     "webpack-stream": "^7.0.0"
   },
   "dependencies": {
