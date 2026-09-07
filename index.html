@@ -1,0 +1,555 @@
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gulp-template — build pipeline</title>
+<meta name="description" content="A walkthrough of the gulp-template build pipeline: the task graph, the style processing chain, a table of tasks and the known defects.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a8452a'/%3E%3Cpath d='M8 10h16M8 16h11M8 22h6' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#fbfaf7; --panel:#fff; --panel-2:#f5f3ee; --ink:#15171b; --ink-2:#3a3f47;
+  --muted:#666d78; --line:#e4e1da; --line-2:#d4d0c7;
+  --accent:#a8452a; --accent-bg:#f7ebe6;
+  --ok:#2c7350; --ok-bg:#e6f2eb; --warn:#8a5a12; --warn-bg:#f8efdf;
+  --code:#22252b; --code-bg:#f2f0ea;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111316; --panel:#191c20; --panel-2:#1f2329; --ink:#e9ebef; --ink-2:#c3c8d0;
+    --muted:#949cA8; --line:#2a2e35; --line-2:#3a3f47;
+    --accent:#e0917a; --accent-bg:#2c1f1b;
+    --ok:#66c795; --ok-bg:#152a20; --warn:#ddb268; --warn-bg:#2d2413;
+    --code:#dfe3e9; --code-bg:#1c2026;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111316; --panel:#191c20; --panel-2:#1f2329; --ink:#e9ebef; --ink-2:#c3c8d0;
+  --muted:#949ca8; --line:#2a2e35; --line-2:#3a3f47;
+  --accent:#e0917a; --accent-bg:#2c1f1b;
+  --ok:#66c795; --ok-bg:#152a20; --warn:#ddb268; --warn-bg:#2d2413;
+  --code:#dfe3e9; --code-bg:#1c2026;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); margin:0;
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:56px 28px 96px}
+a{color:var(--accent)}
+a:hover{text-decoration:none}
+
+.eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;font-weight:600}
+h1{font-size:40px;line-height:1.12;letter-spacing:-.025em;margin:0 0 18px;font-weight:660}
+.lead{font-size:19px;line-height:1.55;color:var(--ink-2);margin:0 0 28px;max-width:70ch}
+h2{font-size:24px;letter-spacing:-.018em;margin:64px 0 6px;font-weight:640}
+h2 + .sub{color:var(--muted);font-size:15px;margin:0 0 26px;max-width:72ch}
+h3{font-size:16px;letter-spacing:-.005em;margin:34px 0 10px;font-weight:640}
+p{margin:0 0 16px;max-width:72ch}
+.muted{color:var(--muted)}
+
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px;padding:0;list-style:none}
+.meta li{font-size:12.5px;border:1px solid var(--line-2);border-radius:999px;padding:4px 12px;color:var(--ink-2);background:var(--panel)}
+.meta li b{font-weight:600;color:var(--ink)}
+
+.rule{height:1px;background:var(--line);border:0;margin:44px 0 0}
+
+figure{margin:0 0 10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 20px 16px}
+.fig-scroll{overflow-x:auto;overflow-y:hidden}
+figure svg{display:block;height:auto;color:var(--ink)}
+#taskgraph{min-width:900px;width:100%}
+#scsspipe{min-width:560px;width:100%;max-width:640px;margin:0 auto}
+figcaption{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px;line-height:1.55}
+figcaption b{color:var(--ink-2);font-weight:600}
+.scrollhint{display:none;color:var(--muted);font-size:12.5px;margin:0 0 10px}
+@media (max-width:900px){.scrollhint{display:block}}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin:0 0 8px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--panel-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code,th code{white-space:nowrap}
+.tname{font-weight:640;white-space:nowrap}
+
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:var(--code-bg);color:var(--code);padding:1.5px 5px;border-radius:4px}
+pre{background:var(--code-bg);color:var(--code);border:1px solid var(--line);border-radius:10px;padding:15px 17px;overflow-x:auto;margin:0;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:13px;line-height:1.62;tab-size:2}
+pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.snip{margin:0 0 26px}
+.snip .why{margin:9px 2px 0;color:var(--muted);font-size:13.5px;line-height:1.55;max-width:72ch}
+
+.notes{list-style:none;padding:0;margin:0}
+.notes li{border-left:2px solid var(--line-2);padding:2px 0 2px 17px;margin:0 0 17px;max-width:74ch}
+.notes li.fixed{border-left-color:var(--ok)}
+.notes li.open{border-left-color:var(--warn)}
+.notes .t{font-weight:640;display:block;margin-bottom:3px}
+.notes .d{color:var(--ink-2);font-size:14.5px;line-height:1.58}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;margin-right:8px;vertical-align:1.5px}
+.tag-fixed{color:var(--ok);background:var(--ok-bg)}
+.tag-open{color:var(--warn);background:var(--warn-bg)}
+
+.demo{display:flex;flex-wrap:wrap;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.demo .btn{flex:0 0 auto;align-self:flex-start;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:14.5px;padding:10px 20px;border-radius:8px}
+.demo .btn:hover{opacity:.88}
+.demo p{margin:0;font-size:14px;color:var(--muted);flex:1 1 280px;min-width:0}
+
+footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+footer a{color:var(--muted)}
+
+@media (max-width:640px){
+  .wrap{padding:38px 18px 72px}
+  h1{font-size:30px}
+  .lead{font-size:17px}
+  h2{font-size:21px;margin-top:52px}
+  figure{padding:16px 12px 12px}
+  .demo{flex-direction:column;align-items:stretch;padding:18px}
+  .demo .btn{align-self:stretch;text-align:center}
+  .demo p{flex:0 1 auto}
+}
+</style>
+
+<div class="wrap">
+
+<p class="eyebrow">Build pipeline</p>
+<h1>gulp-template</h1>
+<p class="lead">
+  A front-end build starter on Gulp 4 written in ESM: nine tasks, a single place where every path is
+  declared, and one <code>--build</code> flag that switches the whole pipeline between development and
+  production. Below: the task graph and the processing chains, read out of the repository's code rather
+  than its README.
+</p>
+<ul class="meta">
+  <li><b>gulp</b> 4.0.2</li>
+  <li><b>sass</b> dart-sass 1.68</li>
+  <li><b>js</b> webpack-stream 7</li>
+  <li><b>server</b> browser-sync 2.27</li>
+  <li><b>modules</b> ESM (<code>"type": "module"</code>)</li>
+  <li><b>tasks</b> 9 + 4 font converters</li>
+</ul>
+
+<hr class="rule">
+
+<h2>What it is and what it solves</h2>
+<p class="sub">Not a site — a build skeleton you copy in at the start of a new markup project.</p>
+<p>
+  The starter exists to take the repetitive setup out of every new project: compiling SCSS with
+  autoprefixing and media-query grouping, assembling HTML from include blocks, converting fonts to
+  <code>woff/woff2</code>, generating <code>.webp</code> copies of images and SVG sprites, minification,
+  a live-reload server, zipping the build and uploading it over FTP.
+</p>
+<p>
+  The key architectural decision is that <b>all configuration lives outside the tasks</b>. Paths sit in
+  <code>gulp/configs/path.js</code>, shared plugins in <code>gulp/configs/plugins.js</code>, and both
+  structures are put on <code>global.app</code> together with the mode flags. After that a task file
+  contains nothing but the flow: where to read from, what to apply, where to write. The second decision is
+  <b>one flag instead of two configs</b>: the mode comes from whether <code>--build</code> is in the
+  arguments, and inside the tasks the differences are expressed with <code>gulp-if</code>, so the dev and
+  prod chains never fork into separate files.
+</p>
+
+<h2>Task graph</h2>
+<p class="sub">
+  Read straight off <code>gulpfile.js</code>: two entry points, a shared clean step, a block of six tasks
+  that run in parallel, and different tails for dev and prod.
+</p>
+
+<p class="scrollhint">The diagram is wider than the screen — scroll it horizontally.</p>
+<figure>
+<div class="fig-scroll">
+<svg id="taskgraph" viewBox="0 0 960 620" role="img"
+     aria-label="gulp-template task graph: npm run dev and npm run prod both converge on cleanBuild; prod additionally runs fontsConverter; both modes then run the parallel FilesProcess block of six tasks; dev finishes by running watcher and browser-sync in parallel.">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor"/>
+    </marker>
+    <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+
+  <!-- entry points -->
+  <rect x="150" y="16" width="210" height="46" rx="7" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".38"/>
+  <text x="255" y="37" text-anchor="middle" font-size="13.5" font-weight="640" fill="currentColor">npm run dev</text>
+  <text x="255" y="53" text-anchor="middle" font-size="10.5" fill="var(--muted)">gulp · app.isBuild = false</text>
+
+  <rect x="600" y="16" width="210" height="46" rx="7" fill="var(--accent-bg)" stroke="var(--accent)" stroke-opacity=".7"/>
+  <text x="705" y="37" text-anchor="middle" font-size="13.5" font-weight="640" fill="currentColor">npm run prod</text>
+  <text x="705" y="53" text-anchor="middle" font-size="10.5" fill="var(--muted)">gulp prod --build · isBuild = true</text>
+
+  <polyline points="255,62 255,84 480,84" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.4"/>
+  <polyline points="705,62 705,84 480,84" fill="none" stroke="var(--accent)" stroke-opacity=".8" stroke-width="1.4"/>
+  <line x1="480" y1="84" x2="480" y2="104" stroke="currentColor" stroke-opacity=".5" stroke-width="1.4" marker-end="url(#ar)"/>
+
+  <!-- cleanBuild -->
+  <rect x="375" y="104" width="210" height="44" rx="7" fill="var(--panel)" stroke="currentColor" stroke-opacity=".38"/>
+  <text x="480" y="124" text-anchor="middle" font-size="12.5" font-weight="640" fill="currentColor">cleanBuild</text>
+  <text x="480" y="139" text-anchor="middle" font-size="10" fill="var(--muted)">del('./dist')</text>
+
+  <!-- dev bypass -->
+  <polyline points="375,126 60,126 60,320 200,320 200,346" fill="none" stroke="currentColor" stroke-opacity=".45"
+            stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+  <text x="76" y="206" font-size="11" font-weight="640" fill="currentColor">dev</text>
+  <text x="76" y="221" font-size="10" fill="var(--muted)">skips the font</text>
+  <text x="76" y="234" font-size="10" fill="var(--muted)">conversion step</text>
+
+  <!-- prod-only fonts converter -->
+  <line x1="480" y1="148" x2="480" y2="186" stroke="var(--accent)" stroke-opacity=".8" stroke-width="1.4" marker-end="url(#ar-a)"/>
+  <text x="492" y="171" font-size="10.5" font-weight="640" fill="var(--accent)">prod</text>
+
+  <rect x="330" y="186" width="300" height="116" rx="9" fill="none" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="6 4"/>
+  <text x="480" y="204" text-anchor="middle" font-size="11" font-weight="640" fill="var(--accent)">fontsConverter · prod only</text>
+
+  <rect x="346" y="230" width="96" height="30" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+  <text x="394" y="249" text-anchor="middle" font-size="11" fill="currentColor">otfToTtf</text>
+
+  <line x1="442" y1="245" x2="466" y2="245" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3"/>
+  <polyline points="466,245 466,228 490,228" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" marker-end="url(#ar)"/>
+  <polyline points="466,245 466,262 490,262" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" marker-end="url(#ar)"/>
+
+  <rect x="490" y="215" width="124" height="26" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+  <text x="552" y="232" text-anchor="middle" font-size="11" fill="currentColor">ttfToWoff</text>
+  <rect x="490" y="249" width="124" height="26" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+  <text x="552" y="266" text-anchor="middle" font-size="11" fill="currentColor">ttfToWoff2</text>
+
+  <text x="480" y="292" text-anchor="middle" font-size="9.5" fill="var(--muted)">src/fonts/*.otf → .ttf → .woff + .woff2 — written back into src/fonts</text>
+
+  <line x1="480" y1="302" x2="480" y2="346" stroke="var(--accent)" stroke-opacity=".8" stroke-width="1.4" marker-end="url(#ar-a)"/>
+
+  <!-- FilesProcess -->
+  <rect x="20" y="346" width="920" height="150" rx="9" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-dasharray="6 4"/>
+  <text x="480" y="366" text-anchor="middle" font-size="11" font-weight="640" fill="currentColor">FilesProcess · gulp.parallel — six tasks at once</text>
+
+  <g font-size="9.5" fill="var(--muted)" text-anchor="middle">
+    <rect x="34"  y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="102" y="397" font-size="12" font-weight="640" fill="currentColor">fonts</text>
+    <text x="102" y="411">series: fontsStyle</text>
+    <text x="102" y="423">→ fontsCp → dist/fonts</text>
+
+    <rect x="182" y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="250" y="397" font-size="12" font-weight="640" fill="currentColor">scss</text>
+    <text x="250" y="411">src/scss/**/*.scss</text>
+    <text x="250" y="423">→ dist/css</text>
+
+    <rect x="331" y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="399" y="397" font-size="12" font-weight="640" fill="currentColor">images</text>
+    <text x="399" y="411">src/img/** (raster)</text>
+    <text x="399" y="423">→ dist/img + .webp</text>
+
+    <rect x="479" y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="547" y="397" font-size="12" font-weight="640" fill="currentColor">svgSprites</text>
+    <text x="547" y="411">src/img/**/*.svg</text>
+    <text x="547" y="423">→ dist/img/icons</text>
+
+    <rect x="628" y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="696" y="397" font-size="12" font-weight="640" fill="currentColor">html</text>
+    <text x="696" y="411">src/html/*.html</text>
+    <text x="696" y="423">→ dist/*.html</text>
+
+    <rect x="776" y="378" width="137" height="56" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+    <text x="844" y="397" font-size="12" font-weight="640" fill="currentColor">js</text>
+    <text x="844" y="411">src/js/app.js</text>
+    <text x="844" y="423">→ dist/js/app.min.js</text>
+  </g>
+
+  <text x="480" y="464" text-anchor="middle" font-size="10" fill="var(--muted)">each task reads app.isBuild and uses gulp-if to switch on minification, autoprefixing and webp</text>
+  <text x="480" y="481" text-anchor="middle" font-size="10" fill="var(--muted)">prod ends here: dist/ is built</text>
+
+  <!-- dev tail -->
+  <line x1="480" y1="496" x2="480" y2="524" stroke="currentColor" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+  <text x="492" y="514" font-size="10.5" font-weight="640" fill="currentColor">dev</text>
+
+  <rect x="250" y="524" width="460" height="80" rx="9" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-dasharray="6 4"/>
+  <text x="480" y="543" text-anchor="middle" font-size="11" font-weight="640" fill="currentColor">dev only · gulp.parallel</text>
+
+  <rect x="266" y="553" width="200" height="38" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+  <text x="366" y="570" text-anchor="middle" font-size="11.5" font-weight="640" fill="currentColor">watcher</text>
+  <text x="366" y="583" text-anchor="middle" font-size="9.5" fill="var(--muted)">gulp.watch: scss · html · img · js</text>
+
+  <rect x="494" y="553" width="200" height="38" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".35"/>
+  <text x="594" y="570" text-anchor="middle" font-size="11.5" font-weight="640" fill="currentColor">CpCerts → server</text>
+  <text x="594" y="583" text-anchor="middle" font-size="9.5" fill="var(--muted)">browser-sync, baseDir: dist/</text>
+</svg>
+</div>
+<figcaption>
+  A <b>solid line</b> is the shared path, a <b>dashed line</b> a branch belonging to one mode, and
+  <b>color</b> marks what runs only under <code>--build</code>. The <code>zip</code> and <code>deploy</code>
+  tasks are not on the diagram: they are separate entry points that repeat
+  <code>cleanBuild → FilesProcess</code> and append <code>ZipBuild</code> and <code>FtpUpload</code>.
+</figcaption>
+</figure>
+
+<h2>Style pipeline</h2>
+<p class="sub">
+  The most substantial task in the starter is <code>gulp/tasks/scss.js</code>. Fourteen steps, two taps
+  that write to disk, and four steps that only the flag turns on.
+</p>
+
+<figure>
+<div class="fig-scroll">
+<svg id="scsspipe" viewBox="0 0 620 690" role="img"
+     aria-label="The scss task chain: from gulp.src over src/scss to two writes into dist/css — the expanded styles.css and the minified styles.min.css; the group-css-media-queries, webpcss, autoprefixer and clean-css steps run only under the --build flag, while sourcemaps run only in dev.">
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11.5">
+    <!-- rows: y = 24 + i*46, h=34, box x=40 w=250 -->
+    <rect x="40" y="24"  width="250" height="34" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".38"/>
+    <text x="54" y="46" fill="currentColor">gulp.src('src/scss/**/*.scss')</text>
+
+    <rect x="40" y="70"  width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="92" fill="currentColor">plumber + notify.onError</text>
+
+    <rect x="40" y="116" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="138" fill="currentColor">replace('@img/' → '../img/')</text>
+
+    <rect x="40" y="162" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="184" fill="currentColor">sourcemaps.init()</text>
+
+    <rect x="40" y="208" width="250" height="34" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="54" y="230" fill="currentColor" font-weight="640">dart-sass · expanded</text>
+
+    <rect x="40" y="254" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="276" fill="currentColor">groupCssMediaQueries()</text>
+
+    <rect x="40" y="300" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="322" fill="currentColor">webpcss(.webp/.no-webp)</text>
+
+    <rect x="40" y="346" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="368" fill="currentColor">autoprefixer(grid: true)</text>
+
+    <rect x="40" y="392" width="250" height="34" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="54" y="414" fill="currentColor" font-weight="640">dest('dist/css')</text>
+
+    <rect x="40" y="438" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="460" fill="currentColor">cleanCss()</text>
+
+    <rect x="40" y="484" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="506" fill="currentColor">rename({extname:'.min.css'})</text>
+
+    <rect x="40" y="530" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="552" fill="currentColor">sourcemaps.write('./')</text>
+
+    <rect x="40" y="576" width="250" height="34" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="54" y="598" fill="currentColor" font-weight="640">dest('dist/css')</text>
+
+    <rect x="40" y="622" width="250" height="34" rx="6" fill="var(--panel)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="54" y="644" fill="currentColor">browsersync.stream()</text>
+  </g>
+
+  <!-- connectors -->
+  <g stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" fill="none">
+    <line x1="165" y1="58"  x2="165" y2="70"  marker-end="url(#ar2)"/>
+    <line x1="165" y1="104" x2="165" y2="116" marker-end="url(#ar2)"/>
+    <line x1="165" y1="150" x2="165" y2="162" marker-end="url(#ar2)"/>
+    <line x1="165" y1="196" x2="165" y2="208" marker-end="url(#ar2)"/>
+    <line x1="165" y1="242" x2="165" y2="254" marker-end="url(#ar2)"/>
+    <line x1="165" y1="288" x2="165" y2="300" marker-end="url(#ar2)"/>
+    <line x1="165" y1="334" x2="165" y2="346" marker-end="url(#ar2)"/>
+    <line x1="165" y1="380" x2="165" y2="392" marker-end="url(#ar2)"/>
+    <line x1="165" y1="426" x2="165" y2="438" marker-end="url(#ar2)"/>
+    <line x1="165" y1="472" x2="165" y2="484" marker-end="url(#ar2)"/>
+    <line x1="165" y1="518" x2="165" y2="530" marker-end="url(#ar2)"/>
+    <line x1="165" y1="564" x2="165" y2="576" marker-end="url(#ar2)"/>
+    <line x1="165" y1="610" x2="165" y2="622" marker-end="url(#ar2)"/>
+  </g>
+
+  <!-- condition badges -->
+  <g font-size="9.5" font-weight="640" text-anchor="middle">
+    <rect x="300" y="170" width="54" height="18" rx="9" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="327" y="183" fill="var(--muted)">dev</text>
+    <rect x="300" y="262" width="72" height="18" rx="9" fill="var(--accent-bg)" stroke="var(--accent)" stroke-opacity=".55"/>
+    <text x="336" y="275" fill="var(--accent)">--build</text>
+    <rect x="300" y="308" width="72" height="18" rx="9" fill="var(--accent-bg)" stroke="var(--accent)" stroke-opacity=".55"/>
+    <text x="336" y="321" fill="var(--accent)">--build</text>
+    <rect x="300" y="354" width="72" height="18" rx="9" fill="var(--accent-bg)" stroke="var(--accent)" stroke-opacity=".55"/>
+    <text x="336" y="367" fill="var(--accent)">--build</text>
+    <rect x="300" y="446" width="72" height="18" rx="9" fill="var(--accent-bg)" stroke="var(--accent)" stroke-opacity=".55"/>
+    <text x="336" y="459" fill="var(--accent)">--build</text>
+    <rect x="300" y="538" width="54" height="18" rx="9" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="327" y="551" fill="var(--muted)">dev</text>
+  </g>
+
+  <!-- output taps -->
+  <g>
+    <polyline points="290,409 400,409" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" marker-end="url(#ar2)"/>
+    <rect x="404" y="394" width="200" height="30" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="504" y="413" text-anchor="middle" font-size="11" fill="currentColor" font-family="ui-monospace,Menlo,Consolas,monospace">dist/css/styles.css</text>
+
+    <polyline points="290,593 400,593" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" marker-end="url(#ar2)"/>
+    <rect x="404" y="578" width="200" height="30" rx="6" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="504" y="597" text-anchor="middle" font-size="11" fill="currentColor" font-family="ui-monospace,Menlo,Consolas,monospace">dist/css/styles.min.css</text>
+  </g>
+</svg>
+</div>
+<figcaption>
+  Unlabelled steps always run. Note the <b>two writes into the same directory</b>: the first
+  <code>dest</code> saves readable CSS, then the stream carries on through <code>cleanCss</code>
+  and <code>rename</code> and is saved a second time — one pass yields both the expanded and the minified
+  file. <code>replace('@img/')</code> sits <b>before</b> the compiler, so the <code>@img/</code> alias works
+  directly in the SCSS sources, and the same replacement in <code>html.js</code> makes it valid in markup too.
+</figcaption>
+</figure>
+
+<h2>Tasks</h2>
+<p class="sub">Everything the modules under <code>gulp/tasks/</code> export.</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>Task</th><th>What it does</th><th>In</th><th>Out</th></tr></thead>
+<tbody>
+<tr><td class="tname">cleanBuild</td><td>Deletes the build directory before every run</td><td><code>./dist</code></td><td>—</td></tr>
+<tr><td class="tname">scss</td><td>dart-sass, media-query grouping, webp classes, autoprefixing, minification; two writes in one pass</td><td><code>src/scss/**/*.scss</code></td><td><code>dist/css/styles.css</code>, <code>styles.min.css</code></td></tr>
+<tr><td class="tname">html</td><td>Assembles the page from blocks via <code>@@include</code>, swaps <code>&lt;img&gt;</code> for <code>&lt;picture&gt;</code> with webp, stamps asset versions, formats and minifies</td><td><code>src/html/*.html</code> + <code>blocks/*</code></td><td><code>dist/index.html</code>, <code>index.min.html</code></td></tr>
+<tr><td class="tname">js</td><td>Runs the entry point through webpack-stream; the mode comes from the flag</td><td><code>src/js/app.js</code></td><td><code>dist/js/app.min.js</code></td></tr>
+<tr><td class="tname">images</td><td>Makes <code>.webp</code> copies, then compresses the originals with imagemin + pngquant; svg is copied as is</td><td><code>src/img/**</code></td><td><code>dist/img/**</code> + <code>.webp</code></td></tr>
+<tr><td class="tname">svgSprites</td><td>Bundles every svg into a single sprite in <code>stack</code> mode</td><td><code>src/img/**/*.svg</code></td><td><code>dist/img/icons/icons.svg</code></td></tr>
+<tr><td class="tname">fontsStyle</td><td>Walks the font directory recursively, derives style and weight from the file name, and generates <code>_fonts.scss</code> with calls to the <code>font()</code> mixin</td><td><code>src/fonts/**</code></td><td><code>src/scss/_fonts.scss</code></td></tr>
+<tr><td class="tname">fontsCp</td><td>Copies into the build only those fonts whose name appears somewhere in the SCSS</td><td><code>src/fonts/**</code></td><td><code>dist/fonts/**</code></td></tr>
+<tr><td class="tname">otfToTtf<br>ttfToWoff<br>ttfToWoff2</td><td>Converts font formats in place, in the sources; runs in prod only, and woff and woff2 run in parallel</td><td><code>src/fonts/*.otf</code>, <code>*.ttf</code></td><td><code>src/fonts/*.ttf</code>, <code>*.woff</code>, <code>*.woff2</code></td></tr>
+<tr><td class="tname">server</td><td>browser-sync over <code>dist/</code>: style injection without a reload, click and scroll sync across devices</td><td><code>dist/</code></td><td>localhost</td></tr>
+<tr><td class="tname">CpCerts</td><td>Puts TLS certificates next to the build for the server's https mode</td><td><code>src/certs/**</code></td><td><code>dist/certs/**</code></td></tr>
+<tr><td class="tname">ZipBuild</td><td>Packs the finished build into an archive named after the project</td><td><code>dist/**</code></td><td><code>&lt;project&gt;-dist.zip</code></td></tr>
+<tr><td class="tname">FtpUpload</td><td>Pushes the build to FTP through vinyl-ftp</td><td><code>dist/**</code></td><td>remote host</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Key excerpts</h2>
+<p class="sub">Four decisions the whole thing rests on.</p>
+
+<div class="snip">
+<pre><code>global.app = {
+    isBuild: process.argv.includes('--build'),
+    isDev: !process.argv.includes('--build'),
+    gulp: gulp,
+    path: path,
+    plugins: plugins,
+    MainFileType: 'html'
+}</code></pre>
+<p class="why">The only piece of global build state. Tasks import neither gulp nor the configs — they
+read <code>app</code>, which keeps a task file a flat description of a stream and lets you move it into
+another project without touching a single import.</p>
+</div>
+
+<div class="snip">
+<pre><code>const fonts = gulp.series(fontsStyle, fontsCp)
+const fontsConverter = gulp.series(otfToTtf, gulp.parallel(ttfToWoff, ttfToWoff2))
+const FilesProcess = gulp.parallel(fonts, scss, images, svgSprites, html, js)
+
+export const dev  = gulp.series(cleanBuild, FilesProcess,
+                                gulp.parallel(watcher, gulp.series(CpCerts, server)))
+export const prod = gulp.series(cleanBuild, gulp.series(fontsConverter, FilesProcess))</code></pre>
+<p class="why">The entire task graph is five lines. <code>series</code> appears where there is a real
+dependency (generate <code>_fonts.scss</code> first, then copy the fonts; <code>.otf → .ttf</code> first,
+then two formats out of the ttf), <code>parallel</code> everywhere there is none.</p>
+</div>
+
+<div class="snip">
+<pre><code>.pipe(app.plugins.if(app.isBuild, groupCssMediaQueries()))
+.pipe(app.plugins.if(app.isBuild, webpcss({ webpClass: '.webp', noWebpClass: '.no-webp' })))
+.pipe(app.plugins.if(app.isBuild, autoprefixer({ grid: true, cascade: true })))
+.pipe(app.gulp.dest(app.path.build.css))
+.pipe(app.plugins.if(app.isBuild, cleanCss()))</code></pre>
+<p class="why"><code>gulp-if</code> instead of two configs: one chain describes both modes, and the
+expensive steps (autoprefixing, media-query merging, minification) cost nothing on every file save in dev.</p>
+</div>
+
+<div class="snip">
+<pre><code>src: {
+    html:      `${srcFolder}/${srcHtmlFolder}/*.html`,
+    images:    `${srcFolder}/${imgFolder}/**/*.{jpeg,jpg,png,gif,webp}`,
+    svgs:      `${srcFolder}/${imgFolder}/**/*.svg`,
+    scss:      `${srcFolder}/${scssFolder}/**/*.{scss,map.scss}`,
+    fontsScss: `${srcFolder}/${scssFolder}/${fontsScss}`,
+    js:        `${srcFolder}/${jsFolder}/app.js`
+},
+watch: {
+    scss: [`${srcFolder}/${scssFolder}/**/*.scss`, `!${srcFolder}/${scssFolder}/**/_fonts.scss`]
+}</code></pre>
+<p class="why">Every path is built from constants in one file. The second line of the watch section is
+the one that matters in practice: <code>_fonts.scss</code> is excluded from watching, otherwise
+<code>fontsStyle</code> — which rewrites that file itself — would put the rebuild into a loop.</p>
+</div>
+
+<h2>Known defects</h2>
+<p class="sub">
+  An honest list. The first four are what had to be fixed to make the starter build at all: out of the
+  box it died on the very first task. The rest are still in the code.
+</p>
+
+<ul class="notes">
+  <li class="fixed"><span class="t"><span class="tag tag-fixed">fixed</span>Font tasks crashed on missing directories</span>
+    <span class="d"><code>fontsStyle</code> unconditionally walks <code>src/fonts</code> and
+    <code>src/img</code>, neither of which is in the repository:
+    <code>ENOENT: no such file or directory, scandir './src/fonts'</code>. Directories created.</span></li>
+
+  <li class="fixed"><span class="t"><span class="tag tag-fixed">fixed</span>Missing semicolon in <code>DirWalk()</code></span>
+    <span class="d">The line <code>data.file_ext, data.file_name, data.dir, data.name = file_ext, …</code>
+    was never terminated, so the next line, which starts with <code>[</code>, parsed as an index —
+    <code>name['eot?#iefix']</code> → <code>undefined.includes(...)</code>. On top of that it was a comma
+    expression, so only <code>data.name</code> was ever assigned, and with the value of <code>dir</code>.
+    Split into four ordinary assignments.</span></li>
+
+  <li class="fixed"><span class="t"><span class="tag tag-fixed">fixed</span>Import of a partial that does not exist</span>
+    <span class="d"><code>@import "_preloader.scss"</code> against a file named
+    <code>preloader.scss</code> with no underscore. Windows sometimes lets this slide; Linux does not.</span></li>
+
+  <li class="fixed"><span class="t"><span class="tag tag-fixed">fixed</span><code>@import '~normalize.css'</code> in SCSS</span>
+    <span class="d">The tilde is webpack resolution syntax; dart-sass leaves the string alone, the invalid
+    <code>@import</code> lands in the CSS, and <code>clean-css</code> trips over it —
+    <code>styles.min.css</code> simply was never produced. <code>normalize.css</code> was not in the
+    dependencies either. The file is now vendored into <code>src/scss/_normalize.scss</code>.</span></li>
+
+  <li class="open"><span class="t"><span class="tag tag-open">open</span><code>for … in</code> instead of <code>for … of</code> in <code>fontsStyle</code></span>
+    <span class="d"><code>for (const [font_name, font_dir] in Object.entries(out))</code> iterates the
+    array's <em>indices</em>, not its elements, so <code>font_name</code> gets the string <code>"0"</code>.
+    <code>_fonts.scss</code> generation does not work. The defect is latent: the starter ships no fonts,
+    so it only surfaces on a real project.</span></li>
+
+  <li class="open"><span class="t"><span class="tag tag-open">open</span><code>??</code> instead of <code>&amp;&amp;</code> in <code>fontsCp</code></span>
+    <span class="d"><code>getScssData().includes(name) ?? app.gulp.src(...)</code> — the left side is
+    always a boolean and never <code>null</code>, so the right side is never evaluated. Fonts are never
+    copied into <code>dist/fonts</code> under any circumstances.</span></li>
+
+  <li class="open"><span class="t"><span class="tag tag-open">open</span>The <code>images</code> task needs native binaries</span>
+    <span class="d"><code>imagemin-pngquant</code> pulls in <code>pngquant-bin</code>, which downloads a
+    platform binary in postinstall. Install with <code>--ignore-scripts</code>, or on a machine with no
+    network, and the task fails with <code>spawn … pngquant ENOENT</code>.</span></li>
+
+  <li class="open"><span class="t"><span class="tag tag-open">open</span>Dead and outdated dependencies</span>
+    <span class="d"><code>gulp-util</code> (used in <code>deploy.js</code>) is deprecated and unmaintained
+    since 2018. <code>swiper</code> sits in <code>optionalDependencies</code> but is imported nowhere — the
+    only mention of it is commented out in <code>app.js</code>. The <code>zip</code> and <code>deploy</code>
+    tasks were not verified: FTP needs real credentials.</span></li>
+
+  <li class="open"><span class="t"><span class="tag tag-open">open</span>The demo page is empty in substance</span>
+    <span class="d">Every block partial (<code>_header.scss</code>, <code>_nav.scss</code>,
+    <code>_main.scss</code>, <code>_article.scss</code>, <code>_aside.scss</code>) is a selector with not one
+    property in it, and the page markup is four words long. That is a deliberate choice by the starter's
+    author, but there is no point reading the build output as markup work — the value here is the pipeline.
+    The repository also carries <code>Gulp preview.rar</code> (362 KB), a binary archive in git.</span></li>
+</ul>
+
+<h2>Build output</h2>
+<p class="sub">
+  After the fixes <code>npm run prod</code> runs clean and produces <code>index.html</code>,
+  <code>css/styles.min.css</code>, <code>css/preloader.min.css</code> and <code>js/app.min.js</code>.
+</p>
+<div class="demo">
+  <a class="btn" href="demo/">Open the built page</a>
+  <p>The pipeline's output as it is: a four-block skeleton, <code>?_v=</code> version suffixes stamped by
+  the <code>html</code> task, styles pulled from <code>css/styles.min.css</code>. The page is here as proof
+  that the build works, not as a sample of markup.</p>
+</div>
+
+<footer>
+  Diagrammed from the code on the <code>main</code> branch: <code>gulpfile.js</code>,
+  <code>gulp/configs/{path,plugins}.js</code>, <code>gulp/tasks/*.js</code>.
+  Every task name, execution order and path on the diagrams is taken from the sources without simplification.
+</footer>
+
+</div>
